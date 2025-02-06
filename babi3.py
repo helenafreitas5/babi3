@@ -6,12 +6,10 @@ from datetime import datetime, timedelta
 import streamlit.components.v1 as components
 import numpy as np
 
-# Configuração
 st.set_page_config(layout="wide", page_title="Plataforma IC Natura")
 
-# Constantes
 COMPETITORS = ["O Boticário", "Avon", "Eudora", "MAC", "Quem disse Berenice"]
-TERRITORIES = ["Digital", "Sustentabilidade", "Experiência", "Inovação"]
+TERRITORIES = ["Digital", "Sustentabilidade", "Experiência", "Inovação"] 
 CATEGORIES = ["Skincare", "Makeup", "Perfumes", "Corpo", "Rosto"]
 
 def generate_mock_data():
@@ -25,8 +23,8 @@ def generate_mock_data():
        'engajamento': np.random.randint(100, 10000, 35),
        'descricao': np.random.choice([
            "Lançamento de nova linha",
-           "Campanha nas redes sociais", 
-           "Parceria com influenciador",
+           "Campanha nas redes sociais",
+           "Parceria com influenciador", 
            "Expansão de mercado",
            "Programa de fidelidade",
            "Inovação em produto",
@@ -48,28 +46,21 @@ def zaia_widget():
    """
    components.html(widget_html, height=700)
 
-# Dados
 movements_data = generate_mock_data()
 
-# Interface
 st.title("🎯 Plataforma IC Natura")
 
-# Tabs
 tabs = st.tabs(["📊 Dashboard", "🔍 Fonte de Dados", "🤖 Decision Make", "📈 Studio"])
 
-# Dashboard
+# Dashboard Tab
 with tabs[0]:
    st.subheader("Overview de Mercado")
    
    col1, col2, col3, col4 = st.columns(4)
-   with col1:
-       st.metric("Movimentos", len(movements_data), "+3")
-   with col2:
-       st.metric("Ações Bomba", len(movements_data[movements_data['tipo'] == 'Bomba']), "+1")
-   with col3:
-       st.metric("Relevância Média", f"{movements_data['relevancia'].mean():.1f}", "+0.2")
-   with col4:
-       st.metric("Engajamento Total", f"{movements_data['engajamento'].sum():,}", "+12%")
+   with col1: st.metric("Movimentos", len(movements_data), "+3")
+   with col2: st.metric("Ações Bomba", len(movements_data[movements_data['tipo'] == 'Bomba']), "+1")
+   with col3: st.metric("Relevância Média", f"{movements_data['relevancia'].mean():.1f}", "+0.2")
+   with col4: st.metric("Engajamento Total", f"{movements_data['engajamento'].sum():,}", "+12%")
 
    col1, col2 = st.columns(2)
    with col1:
@@ -82,7 +73,7 @@ with tabs[0]:
                    values='count', names='tipo', title="Distribuição por Tipo de Ação")
        st.plotly_chart(fig, use_container_width=True)
 
-# Fonte de Dados
+# Fonte de Dados Tab
 with tabs[1]:
    st.subheader("Fontes de Dados")
    
@@ -92,9 +83,8 @@ with tabs[1]:
    with col2:
        selected_territory = st.multiselect("Territórios", TERRITORIES, default=TERRITORIES[:2])
    with col3:
-       date_range = st.date_input("Período", 
-                                [datetime.now() - timedelta(days=30), datetime.now()])
-   
+       date_range = st.date_input("Período", [datetime.now() - timedelta(days=30), datetime.now()])
+       
    filtered_data = movements_data[
        (movements_data['empresa'].isin(selected_competitor)) &
        (movements_data['territorio'].isin(selected_territory))
@@ -116,7 +106,7 @@ with tabs[1]:
                    st.info(movement['tipo'])
                st.metric("Relevância", movement['relevancia'])
 
-# Decision Make
+# Decision Make Tab
 with tabs[2]:
    st.title("🤖 Decision Make")
    st.subheader("Tomada de Decisão Automatizada")
@@ -162,12 +152,12 @@ with tabs[2]:
        st.plotly_chart(fig)
        st.info("Recomendação: Priorizar melhorias no preço e fragrância para aumentar satisfação")
 
-# Studio
+# Studio Tab        
 with tabs[3]:
    st.subheader("Data Studio")
    analysis_type = st.selectbox("Tipo de Análise",
                               ["Quick Analysis", "Competitive Report", "Territory Deep Dive"])
-   
+
    if analysis_type == "Quick Analysis":
        col1, col2 = st.columns(2)
        with col1:
@@ -178,7 +168,7 @@ with tabs[3]:
            territory_matrix = pd.crosstab(movements_data['empresa'], movements_data['territorio'])
            fig = px.imshow(territory_matrix, title="Heatmap de Territórios")
            st.plotly_chart(fig, use_container_width=True)
-   
+
    elif analysis_type == "Competitive Report":
        st.markdown("### Análise Competitiva")
        for competitor in COMPETITORS[:3]:
@@ -190,9 +180,9 @@ with tabs[3]:
            with col2:
                st.metric("Relevância Média", f"{comp_data['relevancia'].mean():.1f}")
            with col3:
-               st.metric("% Ações Relevantes", 
+               st.metric("% Ações Relevantes",
                         f"{(len(comp_data[comp_data['relevancia'] >= 4]) / len(comp_data) * 100):.1f}%")
-   
+
    else:
        selected_territory = st.selectbox("Território", TERRITORIES)
        territory_data = movements_data[movements_data['territorio'] == selected_territory]
@@ -210,19 +200,14 @@ with tabs[3]:
 with st.sidebar:
    st.header("Configurações")
    st.subheader("Fontes de Dados")
-   sources = {
-       "Google Trends": True,
-       "LinkedIn": True,
-       "Notícias": True,
-       "Redes Sociais": False
-   }
    
-   for source, active in sources.items():
-       col1, col2 = st.columns([3,1])
-       with col1:
-           st.checkbox(source, value=active)
-       with col2:
-           st.success("✓") if active else st.warning("×")
+   # Simplified sources handling
+   sources = ["Google Trends", "LinkedIn", "Notícias", "Redes Sociais"]
+   for source in sources:
+       if st.checkbox(source, value=True):
+           st.success("✓")
+       else:
+           st.warning("×")
    
    st.subheader("Alertas")
    st.checkbox("Alertas de Bomba", value=True)
@@ -235,6 +220,6 @@ st.markdown(
    f"""<div style='text-align: center'>
        <small>Última atualização: {datetime.now().strftime('%d/%m/%Y %H:%M')} | 
        Powered by Zaia AI</small>
-   </div>""", 
+   </div>""",
    unsafe_allow_html=True
 )
