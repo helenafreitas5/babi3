@@ -1,41 +1,64 @@
-import streamlit as st
-import pandas as pd
-from datetime import datetime
+# Adicionar ao código existente, após a seção Studio
 
-st.set_page_config(
-    page_title="Natura Intelligence Hub",
-    layout="wide"
-)
-
-menu = st.sidebar.selectbox(
-    "Menu",
-    ["Dashboard", "Monitoramento", "Reports", "Benchmarks", "AI Assistant"]
-)
-
-if menu == "Dashboard":
-    st.title("Dashboard")
+with tabs[2]:  # Novo tab Decision Make
+    st.title("🤖 Decision Make")
+    st.subheader("Tomada de Decisão Automatizada")
     
-    # Métricas
-    c1, c2 = st.columns(2)
-    c1.metric("Ações", "223")
-    c2.metric("Insights", "45")
-    
-    # Tabela exemplo
-    data = {
-        'Data': ['2024-02-06', '2024-02-05'],
-        'Marca': ['Boticário', 'Eudora'],
-        'Ação': ['Campanha Verão', 'Lançamento Perfume'],
-        'Relevância': [4, 3]
-    }
-    st.dataframe(pd.DataFrame(data))
+    decision_type = st.selectbox(
+        "Qual ação tomar?",
+        ["Explorar Novos Mercados", "Ajustar Campanha", "Melhorar Produto"]
+    )
 
-elif menu == "Monitoramento":
-    st.title("Monitoramento")
-    
-    # Filtros
-    marca = st.selectbox("Marca", ["Todos", "Boticário", "Eudora"])
-    categoria = st.multiselect("Categoria", ["Perfumaria", "Presentes"])
-    relevancia = st.slider("Relevância", 1, 4, 2)
+    if decision_type == "Explorar Novos Mercados":
+        st.markdown("### Análise de Expansão")
+        
+        # Dados simulados
+        market_data = pd.DataFrame({
+            'mercado': ['Digital', 'Skincare', 'Bem-estar'],
+            'potencial': [0.8, 0.6, 0.9],
+            'concorrencia': [0.7, 0.4, 0.3]
+        })
+        
+        # Visualização
+        fig = px.scatter(market_data, 
+                        x='concorrencia', 
+                        y='potencial',
+                        text='mercado',
+                        size=[40]*3)
+        st.plotly_chart(fig)
+        
+        st.info("Recomendação: Explorar mercado de Bem-estar devido alto potencial e baixa concorrência")
 
-else:
-    st.title(menu)
+    elif decision_type == "Ajustar Campanha":
+        st.markdown("### Otimização de Campanha")
+        
+        metrics = {
+            'Atual': [0.8, 0.4, 0.6],
+            'Meta': [0.9, 0.6, 0.8]
+        }
+        
+        fig = go.Figure(data=[
+            go.Scatterpolar(r=metrics['Atual'], 
+                           theta=['Engajamento', 'Conversão', 'ROI'],
+                           name='Atual'),
+            go.Scatterpolar(r=metrics['Meta'],
+                           theta=['Engajamento', 'Conversão', 'ROI'],
+                           name='Meta')
+        ])
+        st.plotly_chart(fig)
+        
+        st.info("Recomendação: Focar em aumentar taxa de conversão através de ofertas personalizadas")
+
+    else:  # Melhorar Produto
+        st.markdown("### Análise de Produto")
+        
+        feedback = pd.DataFrame({
+            'aspecto': ['Embalagem', 'Fragrância', 'Textura', 'Preço'],
+            'satisfacao': [4.2, 3.8, 4.5, 3.5]
+        })
+        
+        fig = px.bar(feedback, x='aspecto', y='satisfacao',
+                    title="Satisfação por Aspecto")
+        st.plotly_chart(fig)
+        
+        st.info("Recomendação: Priorizar melhorias no preço e fragrância para aumentar satisfação")
